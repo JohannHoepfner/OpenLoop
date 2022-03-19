@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenLoopRun", "OpenLoopRun\OpenLoopRun.csproj", "{0D5EA686-06A0-4E62-A19C-E173EF776C77}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenLoopGUI", "OpenLoopGUI\OpenLoopGUI.csproj", "{B66EB157-78B8-49C4-B8A1-C89B297A8AD0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D5EA686-06A0-4E62-A19C-E173EF776C77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D5EA686-06A0-4E62-A19C-E173EF776C77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D5EA686-06A0-4E62-A19C-E173EF776C77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D5EA686-06A0-4E62-A19C-E173EF776C77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B66EB157-78B8-49C4-B8A1-C89B297A8AD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B66EB157-78B8-49C4-B8A1-C89B297A8AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B66EB157-78B8-49C4-B8A1-C89B297A8AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B66EB157-78B8-49C4-B8A1-C89B297A8AD0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {93C867DF-26D6-4AAD-ACC2-2E476B2F13F5}
+	EndGlobalSection
+EndGlobal
