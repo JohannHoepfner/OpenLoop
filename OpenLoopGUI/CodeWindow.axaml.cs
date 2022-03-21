@@ -23,6 +23,7 @@ namespace OpenLoopGUI
 				StartCode = Regex.Split(this.FindControl<TextBox>("startCodeInput").Text, "\r\n|\r|\n").ToList(),
 				LoopCode = Regex.Split(this.FindControl<TextBox>("loopCodeInput").Text, "\r\n|\r|\n").ToList()
 			};
+			MW.SimProgress.Value = 0;
 			Close();
 		}
 		private void Close_Click(object sender, RoutedEventArgs e)

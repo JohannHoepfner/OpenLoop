@@ -77,6 +77,7 @@ namespace OpenLoopGUI
 			}
 			catch { }
 			plot.Refresh();
+			SimProgress.Value = 0;
 		}
 
 		private async void Save_Button_Click(object sender, RoutedEventArgs e)
@@ -128,6 +129,7 @@ namespace OpenLoopGUI
 			var p = JsonSerializer.Deserialize<OpenLoopProgram>(fileText);
 			if (p is null) { return; }
 			Program = p;
+			SimProgress.Value = 0;
 		}
 		private void CloseWindow_Button_Click(object sender, RoutedEventArgs e)
 		{
