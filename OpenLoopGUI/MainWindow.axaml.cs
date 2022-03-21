@@ -81,7 +81,10 @@ namespace OpenLoopGUI
 
 		private async void Save_Button_Click(object sender, RoutedEventArgs e)
 		{
-			var fileText = JsonSerializer.Serialize<OpenLoopProgram>(Program);
+			var fileText = JsonSerializer.Serialize<OpenLoopProgram>(
+				value: Program,
+				options: new JsonSerializerOptions() { WriteIndented = true }
+				);
 			var filePick = new SaveFileDialog();
 			filePick.Filters = new List<FileDialogFilter> {
 				new FileDialogFilter()
