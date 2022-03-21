@@ -47,14 +47,18 @@ namespace OpenLoopGUI
 		{
 			xSelect.Items = null;
 			ySelect.Items = null;
-			r = new() { Program = this.Program };
 			SimProgress.Value = 0;
-			r.Start();
-			for (int i = 0; i < Program.Iterations; i++)
+			r = new() { Program = this.Program };
+			try
 			{
-				r.Step();
-				// SimProgress.Value = 100*i/(double)Program.Iterations;
+				r.Start();
+				for (int i = 0; i < Program.Iterations; i++)
+				{
+					r.Step();
+					// SimProgress.Value = 100*i/(double)Program.Iterations;
+				}
 			}
+			catch { return; }
 			SimProgress.Value = 100;
 			xSelect.Items = r.VarHistory[0].Keys;
 			ySelect.Items = r.VarHistory[0].Keys;
