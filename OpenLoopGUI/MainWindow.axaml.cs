@@ -90,8 +90,9 @@ namespace OpenLoopGUI
 				value: Program,
 				options: new JsonSerializerOptions() { WriteIndented = true }
 				);
-			var filePick = new SaveFileDialog();
-			filePick.Filters = new List<FileDialogFilter> {
+			var filePick = new SaveFileDialog
+			{
+				Filters = new List<FileDialogFilter> {
 				new FileDialogFilter()
 				{
 					Extensions = new List<string> { "olc"},
@@ -102,6 +103,7 @@ namespace OpenLoopGUI
 					Extensions = new List<string> { "*"},
 					Name = "All files"
 				}
+			}
 			};
 			var res = await filePick.ShowAsync(this);
 			if (res is null || res == "") { return; }
