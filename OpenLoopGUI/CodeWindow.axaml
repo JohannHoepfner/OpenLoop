@@ -3,7 +3,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+	mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
 	x:Class="OpenLoopGUI.CodeWindow"
 	Title="OpenLoop code"
 	Background="#1b2138"
@@ -23,7 +23,7 @@
 			<Setter Property="FontSize" Value="16"/>
 			<Setter Property="HorizontalAlignment" Value="Center"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Setter Property="Margin" Value="5"/>
+			<Setter Property="Margin" Value="10"/>
 			<Setter Property="Foreground" Value="White"/>
 		</Style>
 		<Style Selector="Button">
@@ -45,25 +45,28 @@
 			<RowDefinition/>
 		</Grid.RowDefinitions>
 		<Grid Grid.Row="0">
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-				<Button Classes="TitleBar" Content="Save and Close" Click="SaveClose_Click" Grid.Column="0"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<Label Content="Iterations" Margin="5" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="14"/>
-				<TextBox Name="IterInput" Text="1" Width="200" VerticalContentAlignment="Center" Margin="5" Background="#252c48" Foreground="White" FontSize="14"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-				<Button Classes="TitleBar" Content="Close" Click="Close_Click" Grid.Column="0"/>
-			</StackPanel>
+			<Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="#2d375e" IsHitTestVisible="False"/>
+			<Panel Margin="2">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+					<Button Classes="TitleBar" Content="Save and Close" Click="SaveClose_Click" Grid.Column="0"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+					<Label Content="Iterations" Margin="5" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="14"/>
+					<TextBox Name="IterInput" Text="1" Width="200" VerticalContentAlignment="Center" Margin="5" Background="#252c48" Foreground="White" FontSize="14"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+					<Button Classes="TitleBar" Content="Close" Click="Close_Click" Grid.Column="0"/>
+				</StackPanel>
+			</Panel>
 		</Grid>
-		<Grid Grid.Row="1">
+		<Grid Name="Body" Grid.Row="1" Margin="5">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="3*"/>
 				<ColumnDefinition Width="2*"/>
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="1*"/>
-				<RowDefinition Height="9*"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
 			</Grid.RowDefinitions>
 			<TextBox Classes="CodeBox" Name="loopCodeInput" Grid.Column="0" Grid.Row="1"/>
 			<TextBox Classes="CodeBox" Name="startCodeInput" Grid.Column="1" Grid.Row="1"/>
