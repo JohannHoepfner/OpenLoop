@@ -10,12 +10,12 @@ namespace OpenLoopGUI
 {
 	public partial class MainWindow : Window
 	{
-		public OpenLoopProgram Program { get; set; }
+		public OpenLoopScript Program { get; set; }
 		Runner r;
 		public MainWindow()
 		{
 			r = new();
-			Program = new OpenLoopProgram();
+			Program = new OpenLoopScript();
 			InitializeComponent();
 			plot.Plot.Style(Style.Blue2);
 			plot.Plot.Palette = Palette.OneHalfDark;
@@ -81,7 +81,7 @@ namespace OpenLoopGUI
 
 		private async void Save_Button_Click(object sender, RoutedEventArgs e)
 		{
-			var fileText = JsonSerializer.Serialize<OpenLoopProgram>(
+			var fileText = JsonSerializer.Serialize<OpenLoopScript>(
 				value: Program,
 				options: new JsonSerializerOptions() { WriteIndented = true }
 				);
@@ -127,7 +127,7 @@ namespace OpenLoopGUI
 			if (res is null) { return; }
 			var file = res[0];
 			var fileText = File.ReadAllText(path: file);
-			var p = JsonSerializer.Deserialize<OpenLoopProgram>(fileText);
+			var p = JsonSerializer.Deserialize<OpenLoopScript>(fileText);
 			if (p is null) { return; }
 			Program = p;
 			SimProgress.Value = 0;

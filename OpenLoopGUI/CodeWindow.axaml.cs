@@ -17,7 +17,7 @@ namespace OpenLoopGUI
 		}
 		private void SaveClose_Click(object sender, RoutedEventArgs e)
 		{
-			MW.Program = new OpenLoopRun.OpenLoopProgram()
+			MW.Program = new OpenLoopRun.OpenLoopScript()
 			{
 				Iterations = long.Parse(this.FindControl<TextBox>("IterInput").Text),
 				StartCode = Regex.Split(this.FindControl<TextBox>("startCodeInput").Text, "\r\n|\r|\n").ToList(),

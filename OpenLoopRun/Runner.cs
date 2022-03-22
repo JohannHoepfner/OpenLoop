@@ -4,7 +4,7 @@ namespace OpenLoopRun
 {
 	public class Runner
 	{
-		public OpenLoopProgram Script { get; set; }
+		public OpenLoopScript Script { get; set; }
 		readonly ExpressionContext context;
 
 		public Runner()
