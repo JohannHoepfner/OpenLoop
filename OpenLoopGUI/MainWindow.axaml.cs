@@ -48,15 +48,10 @@ namespace OpenLoopGUI
 			xSelect.Items = null;
 			ySelect.Items = null;
 			SimProgress.Value = 0;
-			r = new() { Program = this.Program };
+			r = new() { Script = this.Program };
 			try
 			{
-				r.Start();
-				for (int i = 0; i < Program.Iterations; i++)
-				{
-					r.Step();
-					// SimProgress.Value = 100*i/(double)Program.Iterations;
-				}
+				r.RunScript();
 			}
 			catch { return; }
 			SimProgress.Value = 100;
@@ -72,8 +67,8 @@ namespace OpenLoopGUI
 			{
 				var xselection = xSelect.SelectedItem as string;
 				var yselection = ySelect.SelectedItem as string;
-				var dataX = r.VarHistoryT()[xselection].ToArray();
-				var dataY = r.VarHistoryT()[yselection].ToArray();
+				var dataX = r.VarHistoryT[xselection].ToArray();
+				var dataY = r.VarHistoryT[yselection].ToArray();
 				var s = p.AddScatter(dataX, dataY);
 				p.XAxis.Label(xselection);
 				p.YAxis.Label(yselection);
