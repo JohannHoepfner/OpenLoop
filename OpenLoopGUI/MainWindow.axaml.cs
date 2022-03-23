@@ -4,18 +4,19 @@ using OpenLoopRun;
 using ScottPlot;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace OpenLoopGUI
 {
 	public partial class MainWindow : Window
 	{
-		public OpenLoopScript Program { get; set; }
+		public OpenLoopScript Script { get; set; }
 		Runner r;
 		public MainWindow()
 		{
 			r = new();
-			Program = new OpenLoopScript();
+			Script = new OpenLoopScript();
 			InitializeComponent();
 			plot.Plot.Style(Style.Blue2);
 			plot.Plot.Palette = Palette.OneHalfDark;
@@ -26,14 +27,14 @@ namespace OpenLoopGUI
 			{
 				MW = this
 			};
-			c.FindControl<TextBox>("IterInput").Text = Program.Iterations.ToString();
+			c.FindControl<TextBox>("IterInput").Text = Script.Iterations.ToString();
 			string loopCode = "";
-			foreach (var line in Program.LoopCode)
+			foreach (var line in Script.LoopCode)
 			{
 				loopCode += line + "\n";
 			}
 			string startCode = "";
-			foreach (var line in Program.StartCode)
+			foreach (var line in Script.StartCode)
 			{
 				startCode += line + "\n";
 			}
@@ -48,7 +49,7 @@ namespace OpenLoopGUI
 			xSelect.Items = null;
 			ySelect.Items = null;
 			SimProgress.Value = 0;
-			r = new() { Script = this.Program };
+			r = new() { Script = this.Script };
 			try
 			{
 				r.RunScript();
@@ -82,7 +83,7 @@ namespace OpenLoopGUI
 		private async void Save_Button_Click(object sender, RoutedEventArgs e)
 		{
 			var fileText = JsonSerializer.Serialize<OpenLoopScript>(
-				value: Program,
+				value: Script,
 				options: new JsonSerializerOptions() { WriteIndented = true }
 				);
 			var filePick = new SaveFileDialog
@@ -100,9 +101,8 @@ namespace OpenLoopGUI
 				}
 			}
 			};
-			var res = await filePick.ShowAsync(this);
-			if (res is null || res == "") { return; }
-			var file = res;
+			var file = await filePick.ShowAsync(this);
+			if (file is null || file == "") { return; }
 			File.WriteAllText(path: file, contents: fileText);
 		}
 
@@ -129,9 +129,47 @@ namespace OpenLoopGUI
 			var fileText = File.ReadAllText(path: file);
 			var p = JsonSerializer.Deserialize<OpenLoopScript>(fileText);
 			if (p is null) { return; }
-			Program = p;
+			Script = p;
 			SimProgress.Value = 0;
 		}
+		private async void ExportSimData_Button_Click(object sender, RoutedEventArgs e)
+		{
+			var data = r.VarHistory;
+			if (data is null) { return; }
+			string csv = "";
+			var keys = data[0].Keys;
+			foreach (var k in keys)
+			{
+				csv += k + "\t";
+			}
+			foreach (var i in data)
+			{
+				csv += "\n";
+				foreach (var v in keys)
+				{
+					csv += i[v] + "\t";
+				}
+			}
+			var filePick = new SaveFileDialog
+			{
+				Filters = new List<FileDialogFilter> {
+					new FileDialogFilter()
+					{
+						Extensions = new List<string> { "csv"},
+						Name = "csv files"
+					},
+					new FileDialogFilter()
+					{
+						Extensions = new List<string> { "*"},
+						Name = "All files"
+					}
+				}
+			};
+			var file = await filePick.ShowAsync(this);
+			if (file is null || file == "") { return; }
+			File.WriteAllText(path: file, contents: csv);
+		}
+
 		private void CloseWindow_Button_Click(object sender, RoutedEventArgs e)
 		{
 			Close();
