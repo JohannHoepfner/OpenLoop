@@ -21,7 +21,6 @@ namespace OpenLoopRun
 		{
 			foreach (var line in Script.StartCode)
 				RunLine(new ScriptLineSRC(line));
-			UpdateVarHistory(context);
 			foreach (var line in Script.LoopCode)
 				RunLine(new ScriptLineSRC(line));
 			UpdateVarHistory(context);
