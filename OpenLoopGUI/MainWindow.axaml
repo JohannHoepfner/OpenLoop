@@ -48,6 +48,7 @@
 				<Label Classes="TitleBar" Content="    OpenLoop    "/>
 				<Button	Classes="TitleBar" Click="Save_Button_Click" Content="Save Program"/>
 				<Button Classes="TitleBar" Click="Load_Button_Click" Content="Open Program"/>
+				<Button Classes="TitleBar" Click="ExportSimData_Button_Click" Content="Export Simulation Data"/>
 			</StackPanel>
 			<StackPanel Name="TitleBarRight" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
 				<Button	Classes="TitleBar" Click="CloseWindow_Button_Click" Content="Close"/>
