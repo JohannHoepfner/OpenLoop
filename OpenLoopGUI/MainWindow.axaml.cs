@@ -135,13 +135,14 @@ namespace OpenLoopGUI
 		private async void ExportSimData_Button_Click(object sender, RoutedEventArgs e)
 		{
 			var data = r.VarHistory;
-			if (data is null) { return; }
+			if (data is null || data.Count is 0) { return; }
 			string csv = "";
 			var keys = data[0].Keys;
 			foreach (var k in keys)
 			{
 				csv += k + "\t";
 			}
+			csv=csv.Trim();
 			foreach (var i in data)
 			{
 				csv += "\n";
@@ -149,6 +150,7 @@ namespace OpenLoopGUI
 				{
 					csv += i[v] + "\t";
 				}
+				csv = csv.Trim();
 			}
 			var filePick = new SaveFileDialog
 			{
