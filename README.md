@@ -4,3 +4,4 @@
 ![GitHub](https://img.shields.io/github/license/JohannHoepfner/OpenLoop)
 
 # OpenLoop
+Ein zur einfachen Verwendung im Schulunterricht ausgelegtes Programm, um numerische Simulationen zu programmieren.
