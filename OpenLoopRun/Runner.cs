@@ -24,14 +24,11 @@ namespace OpenLoopRun
 			foreach (var line in Script.LoopCode)
 				RunLine(new ScriptLineSRC(line));
 			UpdateVarHistory(context);
-			var LoopCodeCompiled = new List<ScriptLineBIN>();
-			foreach (var line in Script.LoopCode)
-			{
-				LoopCodeCompiled.Add(
-					new ScriptLineBIN(line, context)
-				);
-			}
-			for (int i = 0; i < Script.Iterations; i++)
+			var LoopCodeCompiled =
+				Script.LoopCode.Select(
+					line => new ScriptLineBIN(line, context)
+					).ToList();
+			for (var i = 0; i < Script.Iterations; i++)
 			{
 				foreach (var line in LoopCodeCompiled)
 				{
@@ -83,11 +80,11 @@ namespace OpenLoopRun
 
 		void UpdateVarHistory(ExpressionContext context)
 		{
-			var dict = new Dictionary<string, double>();
-			foreach (var key in context.Variables.Keys)
-			{
-				dict.Add(key, (double)context.Variables[key]);
-			}
+			var dict =
+				context.Variables.Keys.ToDictionary(
+					key => key,
+					key => (double)context.Variables[key]
+					);
 			VarHistory.Add(dict);
 		}
 		public List<Dictionary<string, double>> VarHistory { get; private set; }
@@ -96,16 +93,13 @@ namespace OpenLoopRun
 			get
 			{
 				var res = new Dictionary<string, List<double>>();
-				for (int i = 0; i < VarHistory.Count; i++)
+				foreach (var d in VarHistory.SelectMany(t => t))
 				{
-					foreach (var d in VarHistory[i])
+					if (!res.ContainsKey(d.Key))
 					{
-						if (!res.ContainsKey(d.Key))
-						{
-							res.Add(d.Key, new List<double>());
-						}
-						res[d.Key].Add(d.Value);
+						res.Add(d.Key, new List<double>());
 					}
+					res[d.Key].Add(d.Value);
 				}
 				return res;
 			}

@@ -28,18 +28,14 @@ namespace OpenLoopGUI
 				MW = this
 			};
 			c.FindControl<TextBox>("IterInput").Text = Script.Iterations.ToString();
-			string loopCode = "";
-			foreach (var line in Script.LoopCode)
-			{
-				loopCode += line + "\n";
-			}
-			string startCode = "";
-			foreach (var line in Script.StartCode)
-			{
-				startCode += line + "\n";
-			}
-			startCode = startCode.Trim();
-			loopCode = loopCode.Trim();
+			var loopCode =
+				Script.LoopCode.Aggregate(
+					"", (current, line) => current + (line + "\n")
+					).Trim();
+			var startCode =
+				Script.StartCode.Aggregate(
+					"", (current, line) => current + (line + "\n")
+					).Trim();
 			c.FindControl<TextBox>("loopCodeInput").Text = loopCode;
 			c.FindControl<TextBox>("startCodeInput").Text = startCode;
 			c.ShowDialog(this);
@@ -66,13 +62,13 @@ namespace OpenLoopGUI
 			var p = plot.Plot;
 			try
 			{
-				var xselection = xSelect.SelectedItem as string;
-				var yselection = ySelect.SelectedItem as string;
-				var dataX = r.VarHistoryT[xselection].ToArray();
-				var dataY = r.VarHistoryT[yselection].ToArray();
+				var xSelection = xSelect.SelectedItem as string;
+				var ySelection = ySelect.SelectedItem as string;
+				var dataX = r.VarHistoryT[xSelection].ToArray();
+				var dataY = r.VarHistoryT[ySelection].ToArray();
 				var s = p.AddScatter(dataX, dataY);
-				p.XAxis.Label(xselection);
-				p.YAxis.Label(yselection);
+				p.XAxis.Label(xSelection);
+				p.YAxis.Label(ySelection);
 				s.MarkerSize = 2;
 			}
 			catch { }
@@ -89,17 +85,17 @@ namespace OpenLoopGUI
 			var filePick = new SaveFileDialog
 			{
 				Filters = new List<FileDialogFilter> {
-				new FileDialogFilter()
-				{
-					Extensions = new List<string> { "olc"},
-					Name = "OpenLoop code files"
-				},
-				new FileDialogFilter()
-				{
-					Extensions = new List<string> { "*"},
-					Name = "All files"
+					new FileDialogFilter()
+					{
+						Extensions = new List<string> { "olc"},
+						Name = "OpenLoop code files"
+					},
+					new FileDialogFilter()
+					{
+						Extensions = new List<string> { "*"},
+						Name = "All files"
+					}
 				}
-			}
 			};
 			var file = await filePick.ShowAsync(this);
 			if (file is null || file == "") { return; }
@@ -134,22 +130,21 @@ namespace OpenLoopGUI
 		}
 		private async void ExportSimData_Button_Click(object sender, RoutedEventArgs e)
 		{
+
 			var data = r.VarHistory;
 			if (data is null || data.Count is 0) { return; }
-			string csv = "";
+			string csv;
 			var keys = data[0].Keys;
-			foreach (var k in keys)
-			{
-				csv += k + "\t";
-			}
-			csv=csv.Trim();
+			csv = keys.Aggregate(
+				"", (current, k) => current + (k + "\t")
+				);
+			csv = csv.Trim();
 			foreach (var i in data)
 			{
 				csv += "\n";
-				foreach (var v in keys)
-				{
-					csv += i[v] + "\t";
-				}
+				csv = keys.Aggregate(
+					csv, (current, v) => current + (i[v] + "\t")
+					);
 				csv = csv.Trim();
 			}
 			var filePick = new SaveFileDialog
@@ -168,8 +163,8 @@ namespace OpenLoopGUI
 				}
 			};
 			var file = await filePick.ShowAsync(this);
-			if (file is null || file == "") { return; }
-			File.WriteAllText(path: file, contents: csv);
+			if (file is null or "") { return; }
+			await File.WriteAllTextAsync(path: file, contents: csv);
 		}
 
 		private void CloseWindow_Button_Click(object sender, RoutedEventArgs e)
