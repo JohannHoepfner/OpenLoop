@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using OpenLoopRun;
 using ScottPlot;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace OpenLoopGUI
 {
@@ -21,24 +23,14 @@ namespace OpenLoopGUI
 			plot.Plot.Style(Style.Blue2);
 			plot.Plot.Palette = Palette.OneHalfDark;
 		}
-		void OpenCodeWindow_Click(object sender, RoutedEventArgs e)
+		private void OnScriptEdited(object sender, KeyEventArgs e) 
 		{
-			CodeWindow c = new()
-			{
-				MW = this
-			};
-			c.FindControl<TextBox>("IterInput").Text = Script.Iterations.ToString();
-			var loopCode =
-				Script.LoopCode.Aggregate(
-					"", (current, line) => current + (line + "\n")
-					).Trim();
-			var startCode =
-				Script.StartCode.Aggregate(
-					"", (current, line) => current + (line + "\n")
-					).Trim();
-			c.FindControl<TextBox>("loopCodeInput").Text = loopCode;
-			c.FindControl<TextBox>("startCodeInput").Text = startCode;
-			c.ShowDialog(this);
+			Script.Iterations = long.Parse(IterInput.Text);
+			if (loopCodeInput.Text is not null)
+				Script.LoopCode = Regex.Split(loopCodeInput.Text, "\r\n|\r|\n").ToList();				
+			if (startCodeInput.Text is not null)
+				Script.StartCode = Regex.Split(startCodeInput.Text, "\r\n|\r|\n").ToList();
+			SimProgress.Value = 0;
 		}
 		private void RunSim_Click(object sender, RoutedEventArgs e)
 		{
@@ -56,7 +48,7 @@ namespace OpenLoopGUI
 			ySelect.Items = r.VarHistory[0].Keys;
 		}
 
-		private void UpdatePlotButton_Click(object sender, RoutedEventArgs e)
+		private void OnVarSelecionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			plot.Plot.Clear();
 			var p = plot.Plot;
@@ -104,6 +96,35 @@ namespace OpenLoopGUI
 
 		private void Load_Button_Click(object sender, RoutedEventArgs e)
 		{
+			/*
+			CodeWindow c = new()
+			{
+				MW = this
+			};
+			c.FindControl<TextBox>("IterInput").Text = Script.Iterations.ToString();
+			var loopCode =
+				Script.LoopCode.Aggregate(
+					"", (current, line) => current + (line + "\n")
+					).Trim();
+			var startCode =
+				Script.StartCode.Aggregate(
+					"", (current, line) => current + (line + "\n")
+					).Trim();
+			c.FindControl<TextBox>("loopCodeInput").Text = loopCode;
+			c.FindControl<TextBox>("startCodeInput").Text = startCode;
+			c.ShowDialog(this); 
+
+
+			MW.Script = new OpenLoopRun.OpenLoopScript()
+			{
+				Iterations = long.Parse(this.FindControl<TextBox>("IterInput").Text),
+				StartCode = Regex.Split(this.FindControl<TextBox>("startCodeInput").Text, "\r\n|\r|\n").ToList(),
+				LoopCode = Regex.Split(this.FindControl<TextBox>("loopCodeInput").Text, "\r\n|\r|\n").ToList()
+			};
+			MW.SimProgress.Value = 0;
+			Close()
+			*/
+
 			var filePick = new OpenFileDialog
 			{
 				Filters = new List<FileDialogFilter> {
