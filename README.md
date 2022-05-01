@@ -14,7 +14,7 @@
 
 ## 🌟 Überblick
 - Einfache Umgebung zur Programmierung numerischer Simulationen
-- ausgelegt für die Verwendung durch Schüler/-innen ohne Programmierkenntnisse im Physikunterrischt
+- ausgelegt für die Verwendung durch Schüler/-innen ohne Programmierkenntnisse im Physikunterricht
 
 ## 🚀 Nutzung
 
