@@ -13,39 +13,62 @@ namespace OpenLoopGUI
 {
 	public partial class MainWindow : Window
 	{
-		public OpenLoopScript Script { get; set; }
+		readonly OpenLoopScript Script;
 		Runner r;
 		public MainWindow()
 		{
-			r = new();
 			Script = new OpenLoopScript();
+			r = new() {Script=Script };
 			InitializeComponent();
 			plot.Plot.Style(Style.Blue2);
 			plot.Plot.Palette = Palette.OneHalfDark;
 		}
 		private void OnScriptEdited(object sender, KeyEventArgs e) 
 		{
+			UpdateScriptFromWorkspace();
+			SimProgress.Value = 0;
+		}
+		void UpdateScriptFromWorkspace()
+		{
 			Script.Iterations = long.Parse(IterInput.Text);
 			if (loopCodeInput.Text is not null)
-				Script.LoopCode = Regex.Split(loopCodeInput.Text, "\r\n|\r|\n").ToList();				
+				Script.LoopCode = Regex.Split(loopCodeInput.Text, "\r\n|\r|\n").ToList();
 			if (startCodeInput.Text is not null)
 				Script.StartCode = Regex.Split(startCodeInput.Text, "\r\n|\r|\n").ToList();
-			SimProgress.Value = 0;
 		}
 		private void RunSim_Click(object sender, RoutedEventArgs e)
 		{
+			UpdateScriptFromWorkspace();
+			if (xSelect.SelectedItem is not string oldx) oldx = "";
+			if (ySelect.SelectedItem is not string oldy) oldy = "";
 			xSelect.Items = null;
 			ySelect.Items = null;
 			SimProgress.Value = 0;
-			r = new() { Script = this.Script };
+			r.RunScript();
 			try
 			{
-				r.RunScript();
+				
 			}
 			catch { return; }
 			SimProgress.Value = 100;
 			xSelect.Items = r.VarHistory[0].Keys;
 			ySelect.Items = r.VarHistory[0].Keys;
+			if (r.VarHistory[0].Keys.Contains(oldx))
+				xSelect.SelectedItem = oldx;
+			else
+			{
+				if (r.VarHistory[0].Keys.Contains("t"))
+					xSelect.SelectedItem = "t";
+				if (r.VarHistory[0].Keys.Contains("x"))
+					xSelect.SelectedItem = "x";
+			}
+			if (r.VarHistory[0].Keys.Contains(oldy))
+				ySelect.SelectedItem = oldy;
+			else
+			{
+				if (r.VarHistory[0].Keys.Contains("y"))
+					ySelect.SelectedItem = "y";
+			}
 		}
 
 		private void OnVarSelecionChanged(object sender, SelectionChangedEventArgs e)
@@ -96,35 +119,6 @@ namespace OpenLoopGUI
 
 		private void Load_Button_Click(object sender, RoutedEventArgs e)
 		{
-			/*
-			CodeWindow c = new()
-			{
-				MW = this
-			};
-			c.FindControl<TextBox>("IterInput").Text = Script.Iterations.ToString();
-			var loopCode =
-				Script.LoopCode.Aggregate(
-					"", (current, line) => current + (line + "\n")
-					).Trim();
-			var startCode =
-				Script.StartCode.Aggregate(
-					"", (current, line) => current + (line + "\n")
-					).Trim();
-			c.FindControl<TextBox>("loopCodeInput").Text = loopCode;
-			c.FindControl<TextBox>("startCodeInput").Text = startCode;
-			c.ShowDialog(this); 
-
-
-			MW.Script = new OpenLoopRun.OpenLoopScript()
-			{
-				Iterations = long.Parse(this.FindControl<TextBox>("IterInput").Text),
-				StartCode = Regex.Split(this.FindControl<TextBox>("startCodeInput").Text, "\r\n|\r|\n").ToList(),
-				LoopCode = Regex.Split(this.FindControl<TextBox>("loopCodeInput").Text, "\r\n|\r|\n").ToList()
-			};
-			MW.SimProgress.Value = 0;
-			Close()
-			*/
-
 			var filePick = new OpenFileDialog
 			{
 				Filters = new List<FileDialogFilter> {
@@ -146,12 +140,18 @@ namespace OpenLoopGUI
 			var fileText = File.ReadAllText(path: file);
 			var p = JsonSerializer.Deserialize<OpenLoopScript>(fileText);
 			if (p is null) { return; }
-			Script = p;
+			UpdateWorkspaceFromScript(p);
+			UpdateScriptFromWorkspace();
 			SimProgress.Value = 0;
+		}
+		void UpdateWorkspaceFromScript(OpenLoopScript s)
+		{
+			IterInput.Text = s.Iterations.ToString();
+			loopCodeInput.Text = s.LoopCode.Aggregate("", (c, l) => c + (l + "\n")).Trim();
+			startCodeInput.Text = s.StartCode.Aggregate("", (c, l) => c + (l + "\n")).Trim();
 		}
 		private async void ExportSimData_Button_Click(object sender, RoutedEventArgs e)
 		{
-
 			var data = r.VarHistory;
 			if (data is null || data.Count is 0) { return; }
 			string csv;
@@ -187,10 +187,6 @@ namespace OpenLoopGUI
 			if (file is null or "") { return; }
 			await File.WriteAllTextAsync(path: file, contents: csv);
 		}
-
-		private void CloseWindow_Button_Click(object sender, RoutedEventArgs e)
-		{
-			Close();
-		}
+		private void Close_Click(object sender, RoutedEventArgs e) => Close();
 	}
 }
