@@ -44,10 +44,10 @@ namespace OpenLoopGUI
 			xSelect.Items = null;
 			ySelect.Items = null;
 			SimProgress.Value = 0;
-			r.RunScript();
+			r.VarHistory.Clear();
 			try
 			{
-				
+				r.RunScript();
 			}
 			catch { return; }
 			SimProgress.Value = 100;
