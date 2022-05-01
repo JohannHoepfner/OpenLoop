@@ -7,9 +7,33 @@ namespace OpenLoopRun
 {
     public partial class Runner
     {
+        public IDictionary<string, List<double>> VarHistoryT
+        {
+            get
+            {
+                var res = new Dictionary<string, List<double>>();
+                foreach (var (key, value) in VarHistory.SelectMany(t => t))
+                {
+                    if (!res.ContainsKey(key))
+                    {
+                        res.Add(key, new List<double>());
+                    }
+
+                    res[key].Add(value);
+                }
+
+                return res;
+            }
+        }
+        
         public OpenLoopScript Script { get; init; }
+        public ICollection<IDictionary<string, double>> VarHistory { get; }
+        
         private readonly ExpressionContext _context;
 
+        /// <summary>
+        /// Sets parser options and opens new OpenLoopScript class.
+        /// </summary>
         public Runner()
         {
             _context = new ExpressionContext();
@@ -22,6 +46,9 @@ namespace OpenLoopRun
             Script = new OpenLoopScript();
         }
 
+        /// <summary>
+        /// Runs start-script once and loop-script every time-step
+        /// </summary>
         public void RunScript()
         {
             foreach (var line in Script.StartCode)
@@ -48,17 +75,29 @@ namespace OpenLoopRun
             }
         }
 
+        /// <summary>
+        /// Compiles line and executes it once.
+        /// </summary>
+        /// <param name="line"></param>
         private void RunLine(ScriptLineSrc line)
         {
             var lineCompiled = new ScriptLineBin(line, _context);
             RunLine(lineCompiled);
         }
 
+        /// <summary>
+        /// Execute line once
+        /// </summary>
+        /// <param name="line"></param>
         private void RunLine(ScriptLineBin line)
         {
             _context.Variables[line.VariableToStore] = line.ExpressionToEval.Evaluate();
         }
 
+        /// <summary>
+        /// renews vars per time-step
+        /// </summary>
+        /// <param name="context"></param>
         private void UpdateVarHistory(ExpressionContext context)
         {
             var dict =
@@ -67,27 +106,6 @@ namespace OpenLoopRun
                     key => (double)context.Variables[key]
                 );
             VarHistory.Add(dict);
-        }
-
-        public ICollection<IDictionary<string, double>> VarHistory { get; private set; }
-
-        public IDictionary<string, List<double>> VarHistoryT
-        {
-            get
-            {
-                var res = new Dictionary<string, List<double>>();
-                foreach (var (key, value) in VarHistory.SelectMany(t => t))
-                {
-                    if (!res.ContainsKey(key))
-                    {
-                        res.Add(key, new List<double>());
-                    }
-
-                    res[key].Add(value);
-                }
-
-                return res;
-            }
         }
     }
 }

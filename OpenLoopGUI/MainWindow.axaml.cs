@@ -11,11 +11,13 @@ using Avalonia.Input;
 
 namespace OpenLoopGUI
 {
+    /// <inheritdoc />
     public partial class MainWindow : Window
     {
         private readonly OpenLoopScript _script;
         private readonly Runner _r;
 
+        /// <inheritdoc />
         public MainWindow()
         {
             _script = new OpenLoopScript();
@@ -26,12 +28,18 @@ namespace OpenLoopGUI
             Plot.Plot.Palette = Palette.OneHalfDark;
         }
 
+        /// <summary>
+        /// Updates internal script.
+        /// </summary>
         private void OnScriptEdited(object? sender, KeyEventArgs keyEventArgs)
         {
             UpdateScriptFromWorkspace();
             SimProgress.Value = 0;
         }
 
+        /// <summary>
+        /// Gets script from Workspace and updates internal loop- and start-scripts.
+        /// </summary>
         private void UpdateScriptFromWorkspace()
         {
             _script.Iterations = long.Parse(IterInput.Text);
@@ -43,6 +51,9 @@ namespace OpenLoopGUI
                 _script.StartCode = Regex.Split(StartCodeInput.Text, "\r\n|\r|\n").ToList();
         }
 
+        /// <summary>
+        /// Runs the Simulation and updates variable history.
+        /// </summary>
         private void RunSim_Click(object? sender, RoutedEventArgs routedEventArgs)
         {
             UpdateScriptFromWorkspace();
@@ -93,6 +104,9 @@ namespace OpenLoopGUI
             bool VarExists(string var) => _r.VarHistory.ToList()[0].ContainsKey(var);
         }
 
+        /// <summary>
+        /// Updates the plot to show selected vars.
+        /// </summary>
         private void OnVarSelectionChanged(object? sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
             Plot.Plot.Clear();
@@ -116,6 +130,9 @@ namespace OpenLoopGUI
             SimProgress.Value = 0;
         }
 
+        /// <summary>
+        /// Writes the olc-code to file.
+        /// </summary>
         private async void Save_Button_Click(object? sender, RoutedEventArgs routedEventArgs)
         {
             var fileText = JsonSerializer.Serialize(
@@ -146,6 +163,9 @@ namespace OpenLoopGUI
             await File.WriteAllTextAsync(file, fileText);
         }
 
+        /// <summary>
+        /// Updates the olc-code to match file
+        /// </summary>
         private void Load_Button_Click(object? sender, RoutedEventArgs routedEventArgs)
         {
             var filePick = new OpenFileDialog
@@ -180,19 +200,26 @@ namespace OpenLoopGUI
             SimProgress.Value = 0;
         }
 
-        private void UpdateWorkspaceFromScript(OpenLoopScript s)
+        /// <summary>
+        /// Updates internal scripts to match supplied script
+        /// </summary>
+        /// <param name="script"></param>
+        private void UpdateWorkspaceFromScript(OpenLoopScript script)
         {
-            IterInput.Text = s.Iterations.ToString();
+            IterInput.Text = script.Iterations.ToString();
 
-            LoopCodeInput.Text = s.LoopCode
+            LoopCodeInput.Text = script.LoopCode
                 .Aggregate("", (current, last) => current + last + "\n")
                 .Trim();
 
-            StartCodeInput.Text = s.StartCode
+            StartCodeInput.Text = script.StartCode
                 .Aggregate("", (current, last) => current + last + "\n")
                 .Trim();
         }
 
+        /// <summary>
+        /// Exports calculated data to csv.
+        /// </summary>
         private async void ExportSimData_Button_Click(object sender, RoutedEventArgs e)
         {
             var data = _r.VarHistory;
@@ -235,6 +262,9 @@ namespace OpenLoopGUI
             await File.WriteAllTextAsync(file, csv);
         }
 
+        /// <summary>
+        /// Closes the window
+        /// </summary>
         private void Close_Click(object? sender, RoutedEventArgs routedEventArgs) => Close();
     }
 }

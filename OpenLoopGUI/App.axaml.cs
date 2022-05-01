@@ -11,6 +11,9 @@ namespace OpenLoopGUI
 			AvaloniaXamlLoader.Load(this);
 		}
 
+		/// <summary>
+		/// Opens main window
+		/// </summary>
 		public override void OnFrameworkInitializationCompleted()
 		{
 			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
