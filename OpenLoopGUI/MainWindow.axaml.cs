@@ -14,7 +14,7 @@ namespace OpenLoopGUI
 	public partial class MainWindow : Window
 	{
 		readonly OpenLoopScript Script;
-		Runner r;
+		readonly Runner r;
 		public MainWindow()
 		{
 			Script = new OpenLoopScript();
@@ -53,40 +53,39 @@ namespace OpenLoopGUI
 			SimProgress.Value = 100;
 			xSelect.Items = r.VarHistory[0].Keys;
 			ySelect.Items = r.VarHistory[0].Keys;
-			if (r.VarHistory[0].Keys.Contains(oldx))
+			if (varexists(oldx))
 				xSelect.SelectedItem = oldx;
 			else
 			{
-				if (r.VarHistory[0].Keys.Contains("t"))
+				if (varexists("t"))
 					xSelect.SelectedItem = "t";
-				if (r.VarHistory[0].Keys.Contains("x"))
+				if (varexists("x"))
 					xSelect.SelectedItem = "x";
 			}
-			if (r.VarHistory[0].Keys.Contains(oldy))
+			if (varexists(oldy))
 				ySelect.SelectedItem = oldy;
 			else
 			{
-				if (r.VarHistory[0].Keys.Contains("y"))
+				if (varexists("y"))
 					ySelect.SelectedItem = "y";
 			}
+			bool varexists(string var) => r.VarHistory[0].ContainsKey(var);
 		}
 
 		private void OnVarSelecionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			plot.Plot.Clear();
 			var p = plot.Plot;
-			try
-			{
-				var xSelection = xSelect.SelectedItem as string;
-				var ySelection = ySelect.SelectedItem as string;
-				var dataX = r.VarHistoryT[xSelection].ToArray();
-				var dataY = r.VarHistoryT[ySelection].ToArray();
-				var s = p.AddScatter(dataX, dataY);
-				p.XAxis.Label(xSelection);
-				p.YAxis.Label(ySelection);
-				s.MarkerSize = 2;
-			}
-			catch { }
+			if (
+				xSelect.SelectedItem is not string xSelection 
+				|| ySelect.SelectedItem is not string ySelection
+			) return;
+			var dataX = r.VarHistoryT[xSelection].ToArray();
+			var dataY = r.VarHistoryT[ySelection].ToArray();
+			var s = p.AddScatter(dataX, dataY);
+			p.XAxis.Label(xSelection);
+			p.YAxis.Label(ySelection);
+			s.MarkerSize = 2;
 			plot.Refresh();
 			SimProgress.Value = 0;
 		}
