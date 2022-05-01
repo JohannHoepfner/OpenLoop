@@ -1,16 +1,18 @@
-﻿namespace OpenLoopRun
-{
-	public class OpenLoopScript
-	{
-		public long Iterations { get; set; }
-		public List<String> StartCode { get; set; }
-		public List<String> LoopCode { get; set; }
+﻿using System.Collections.Generic;
 
-		public OpenLoopScript()
-		{
-			Iterations = 1;
-			StartCode = new List<String>();
-			LoopCode = new List<String>();
-		}
-	}
+namespace OpenLoopRun
+{
+    public class OpenLoopScript
+    {
+        public long Iterations { get; set; }
+        public IEnumerable<string> StartCode { get; set; }
+        public IEnumerable<string> LoopCode { get; set; }
+
+        public OpenLoopScript()
+        {
+            Iterations = 1;
+            StartCode = new List<string>();
+            LoopCode = new List<string>();
+        }
+    }
 }
