@@ -36,11 +36,26 @@
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
 			<Setter Property="Foreground" Value="White"/>
 		</Style>
+		<Style Selector="TextBox.CodeBox">
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="AcceptsReturn" Value="True"/>
+			<Setter Property="Margin" Value="5"/>
+			<Setter Property="Background" Value="#252c48"/>
+			<Setter Property="Foreground" Value="White"/>
+		</Style>
+		<Style Selector="Label.CodeBoxHeading">
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="5"/>
+			<Setter Property="Foreground" Value="White"/>
+		</Style>
 	</Window.Styles>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
+			<RowDefinition Height="Auto" MinHeight="20" />
 		</Grid.RowDefinitions>
 		<Rectangle Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="#2d375e" IsHitTestVisible="False"/>
 		<Panel Grid.Row="0" Margin="2">
@@ -51,39 +66,55 @@
 				<Button Classes="TitleBar" Click="ExportSimData_Button_Click" Content="Export Simulation Data"/>
 			</StackPanel>
 			<StackPanel Name="TitleBarRight" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-				<Button	Classes="TitleBar" Click="CloseWindow_Button_Click" Content="Close"/>
+				<Button	Classes="TitleBar" Click="Close_Click" Content="Close"/>
 			</StackPanel>
 		</Panel>
 		<Grid Name="Body" Grid.Row="1" Margin="5">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="5*"/>
-				<ColumnDefinition Width="2*"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="5*" />
 			</Grid.ColumnDefinitions>
-			<ScottPlot:AvaPlot Name="plot" Grid.Column="0"/>
-			<Grid Grid.Column="1" Name="SideBar">
+			<GridSplitter Grid.Column="1"/>
+			<Grid Grid.Column="0" Margin="5">
 				<Grid.RowDefinitions>
-					<RowDefinition Height="1*"/>
-					<RowDefinition Height="1*"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="1*"/>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="3*"/>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="2*"/>
 				</Grid.RowDefinitions>
-				<Button Classes="SideBar" Grid.Row="0" Name="OpenCodeWindowButton" Click="OpenCodeWindow_Click" Content="code editor"/>
-				<ProgressBar Name="SimProgress" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#252c48" Foreground="#3776a9" Margin="5" CornerRadius="5"/>
-				<Button Classes="SideBar" Grid.Row="1" Name="RunSimButton" Click="RunSim_Click" Content="run simulation" Background="Transparent"/>
-				<Border Grid.Row="2" CornerRadius="5" Margin="5" Background="#252c48">
-					<StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Stretch" Margin="5">
-						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-							<Label FontSize="18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Content="variable for x-axis:" Foreground="White"/>
-							<ComboBox FontSize="18" Name="xSelect" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Background="#252c48" Foreground="White"/>
-						</StackPanel>
-						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-							<Label FontSize="18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Content="variable for y-axis:" Foreground="White"/>
-							<ComboBox FontSize="18" Name="ySelect" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Background="#252c48" Foreground="White"/>
-						</StackPanel>
+				<TextBox Classes="CodeBox" Name="loopCodeInput" Grid.Row="1" KeyUp="OnScriptEdited"/>
+				<TextBox Classes="CodeBox" Name="startCodeInput" Grid.Row="3" KeyUp="OnScriptEdited"/>
+				<Label Classes="CodeBoxHeading" Content="Loop" Grid.Row="0" />
+				<Label Classes="CodeBoxHeading" Content="Start" Grid.Row="2"/>
+			</Grid>
+			<Grid Grid.Column="2">
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+				<ScottPlot:AvaPlot Name="plot" Grid.Row="0"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1">
+					<Panel>
+						<ProgressBar Name="SimProgress" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#252c48" Foreground="#3776a9" Margin="5" CornerRadius="5"/>
+						<Button Name="RunSimButton" Classes="SideBar" Click="RunSim_Click" Content="run simulation" Background="Transparent"/>
+					</Panel>
+					<Label Content="Iterations" Margin="5" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="14"/>
+					<TextBox Name="IterInput" KeyUp="OnScriptEdited" Text="1" Width="200" VerticalContentAlignment="Center" Margin="5" Background="#252c48" Foreground="White" FontSize="14"/>
+				</StackPanel>
+				<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+						<Label FontSize="18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Content="variable for x-axis:" Foreground="White"/>
+						<ComboBox SelectionChanged="OnVarSelecionChanged" FontSize="18" Name="xSelect" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Background="#252c48" Foreground="White"/>
 					</StackPanel>
-				</Border>
-				<Button Classes="SideBar" Grid.Row="3" Name="UpdatePlotButton" Click="UpdatePlotButton_Click" Content="update plot"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+						<Label FontSize="18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Content="variable for y-axis:" Foreground="White"/>
+						<ComboBox SelectionChanged="OnVarSelecionChanged" FontSize="18" Name="ySelect" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Background="#252c48" Foreground="White"/>
+					</StackPanel>
+				</StackPanel>
 			</Grid>
 		</Grid>
+		<TextBox Background="#2d375e" Grid.Row="3" Text="Status" IsReadOnly="True"/>
 	</Grid>
 </Window>
