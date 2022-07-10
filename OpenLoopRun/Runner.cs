@@ -27,22 +27,23 @@ namespace OpenLoopRun
         }
         
         public OpenLoopScript Script { get; init; }
-        public ICollection<IDictionary<string, double>> VarHistory { get; }
+        public ICollection<IDictionary<string, double>> VarHistory { get; private set; }
         
-        private readonly ExpressionContext _context;
+        private ExpressionContext _context;
 
         /// <summary>
         /// Sets parser options and opens new OpenLoopScript class.
         /// </summary>
         public Runner()
         {
+            VarHistory = new List<IDictionary<string,double>>();
+            
             _context = new ExpressionContext();
 
             _context.Imports.AddType(typeof(Math));
             _context.ParserOptions.DecimalSeparator = '.';
             _context.ParserOptions.RecreateParser();
 
-            VarHistory = new List<IDictionary<string, double>>();
             Script = new OpenLoopScript();
         }
 
@@ -51,6 +52,12 @@ namespace OpenLoopRun
         /// </summary>
         public void RunScript()
         {
+            VarHistory = new List<IDictionary<string,double>>(); 
+            _context = new ExpressionContext();
+            _context.Imports.AddType(typeof(Math));
+            _context.ParserOptions.DecimalSeparator = '.';
+            _context.ParserOptions.RecreateParser();
+            
             foreach (var line in Script.StartCode)
                 RunLine(new ScriptLineSrc(line));
 

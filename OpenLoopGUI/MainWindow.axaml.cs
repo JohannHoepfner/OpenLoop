@@ -66,8 +66,6 @@ namespace OpenLoopGUI
             
             SimProgress.Value = 0;
             
-            _r.VarHistory.Clear();
-            
             try
             {
                 _r.RunScript();
@@ -79,8 +77,8 @@ namespace OpenLoopGUI
 
             SimProgress.Value = 100;
             
-            XSelect.Items = _r.VarHistory.ToList()[0].Keys;
-            YSelect.Items = _r.VarHistory.ToList()[0].Keys;
+            XSelect.Items = _r.VarHistoryT.Keys;
+            YSelect.Items = _r.VarHistoryT.Keys;
             
             if (VarExists(oldX))
                 XSelect.SelectedItem = oldX;
