@@ -55,7 +55,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" MinHeight="20" />
-            <RowDefinition />
         </Grid.RowDefinitions>
         <Rectangle Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Fill="#2d375e"
                    IsHitTestVisible="False" />
@@ -116,6 +115,5 @@
                 </StackPanel>
             </Grid>
         </Grid>
-        <TextBox Background="#2d375e" Grid.Row="3" Text="Status" IsReadOnly="True" />
     </Grid>
 </Window>
