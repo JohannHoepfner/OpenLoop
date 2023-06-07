@@ -5,6 +5,7 @@ using ScottPlot;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Avalonia.Input;
@@ -226,14 +227,20 @@ namespace OpenLoopGUI
 
             var keys = data.ToList()[0].Keys;
 
-            var csv = keys.Aggregate(
-                "", (current, k) => current + k + "\t"
-            ).Trim();
+            
 
-            csv = data
-                .Aggregate(csv, (current1, i)
-                    => keys.Aggregate(current1 + "\n", (current, v) => current + (i[v] + "\t"))
-                        .Trim());
+            var sb = new StringBuilder();
+            sb.Append( keys.Aggregate("",(current,key) => current + key + "\t").Trim());
+
+            foreach (var doubles in data)
+            {
+                sb.Append('\n');
+                foreach (var key in keys)
+                {
+                    sb.Append(doubles[key]); sb.Append('\t');
+                }
+            }
+            var csv = sb.ToString().Trim();
 
             var filePick = new SaveFileDialog
             {
